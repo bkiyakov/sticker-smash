@@ -1,0 +1,1 @@
+React native app from [expo docs tutorial](https://docs.expo.dev/tutorial/introduction/)
