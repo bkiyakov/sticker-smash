@@ -89,10 +89,14 @@ export default function App() {
 			<View style={styles.imageContainer}>
 				<View ref={imageRef} collapsable={false}>
 					<ImageViewer
+						width={320}
+						height={440}
 						placeholderImageSource={PlaceholderImage}
 						selectedImage={selectedImage}
 					/>
-					{pickedEmoji !== null ? <EmojiSticker stickerSource={pickedEmoji} imageSize={40} /> : null}
+					{pickedEmoji !== null
+						? <EmojiSticker stickerSource={pickedEmoji} imageSize={40} boundX={320} boundY={440} />
+						: null}
 				</View>
 			</View>
 			{showAppOptions ? (

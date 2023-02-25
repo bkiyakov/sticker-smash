@@ -1,11 +1,11 @@
 import { View, Image } from "react-native";
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, interpolate } from "react-native-reanimated";
 import { TapGestureHandler, PanGestureHandler } from "react-native-gesture-handler";
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-const EmojiSticker = ({ stickerSource, imageSize }) => {
+const EmojiSticker = ({ stickerSource, imageSize, boundX, boundY }) => {
 	// Using TapGestureHandler adn double tap to scale emoji
 	const scaleImage = useSharedValue(imageSize);
 
@@ -27,6 +27,8 @@ const EmojiSticker = ({ stickerSource, imageSize }) => {
 	// Using PanGestureHandler to drag emoji
 	const translateX = useSharedValue(0);
 	const translateY = useSharedValue(0);
+	const sharedBoundX = useSharedValue(boundX);
+	const sharedBoundY = useSharedValue(boundY);
 
 	const onDrag = useAnimatedGestureHandler({
 		onStart: (_, context) => {
@@ -43,10 +45,18 @@ const EmojiSticker = ({ stickerSource, imageSize }) => {
 		return {
 			transform: [
 				{
-					translateX: translateX.value
+					translateX: interpolate(
+						translateX.value,
+						[0, sharedBoundX.value - scaleImage.value],
+						[0, sharedBoundX.value - scaleImage.value],
+						'clamp')
 				},
 				{
-					translateY: translateY.value
+					translateY: interpolate(
+						translateY.value,
+						[0, sharedBoundY.value - scaleImage.value],
+						[0, sharedBoundY.value - scaleImage.value],
+						'clamp')
 				}
 			]
 		};
@@ -54,7 +64,7 @@ const EmojiSticker = ({ stickerSource, imageSize }) => {
 
 	return (
 		<PanGestureHandler onGestureEvent={onDrag}>
-			<AnimatedView style={[containerStyle, { top: -350 }]}>
+			<AnimatedView style={[containerStyle, { top: -440 }]}>
 				<TapGestureHandler onGestureEvent={onDoubleTap} numberOfTaps={2}>
 					<AnimatedImage
 						source={stickerSource}
